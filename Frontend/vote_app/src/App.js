@@ -1,21 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
-import React, {useState} from 'react';
-import DataContext from './provider';
+import "./App.css";
+import React, { useState } from "react";
+import DataContext from "./context/provider";
+import AppRouter from "./route";
 function App() {
   const [user, setUser] = useState({
-    name: 'John Doe',
-    age: 30,
-    email: 'john.doe@example.com',
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "https://robohash.org/3d69426afc09ac4d6259056e8f57571e?set=set4&bgset=&size=200x200"
   });
 
   return (
     <div className="App">
       <DataContext.Provider value={{ user, setUser }}>
-      <div>
-        <h1>React App with User Context</h1>
-      </div>
-    </DataContext.Provider>
+        <AppRouter />
+      </DataContext.Provider>
     </div>
   );
 }
