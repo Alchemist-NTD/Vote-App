@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:15.2-alpine3.17
+    container_name: vote_db
+    volumes:
+      - ./Data/db/:/var/lib/postgresql/data
+      - ./Data/initial/:/home/
+    restart: always
+    environment:
+      - POSTGRES_DB=vote_db
+      - POSTGRES_USER=vote_admin
+      - POSTGRES_PASSWORD=vote_password
+    ports:
+      - "5432:5432"
+
+  backend:
+    container_name: vote_backend
+    build: ./Server
+    command: python ./vote/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./Server:/src
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=vote_db
+      - POSTGRES_USER=vote_admin
+      - POSTGRES_PASSWORD=vote_password
+    tty: true
+    depends_on:
+      - database
+    restart: always
+
+  frontend:
+    container_name: vote_app
+    build: ./Frontend
+    volumes:
+      - ./Frontend/vote_app:/app
+    ports:
+      - 3000:3000
+    tty: true
+    restart: always
