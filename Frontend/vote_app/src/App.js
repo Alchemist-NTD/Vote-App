@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import React, { useState } from "react";
+import DataContext from "./context/provider";
+import AppRouter from "./route";
 function App() {
+  const [user, setUser] = useState({
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "https://robohash.org/3d69426afc09ac4d6259056e8f57571e?set=set4&bgset=&size=200x200"
+  });
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <DataContext.Provider value={{ user, setUser }}>
+        <AppRouter />
+      </DataContext.Provider>
     </div>
   );
 }
