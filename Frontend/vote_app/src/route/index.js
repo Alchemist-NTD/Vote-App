@@ -16,8 +16,8 @@ function AppRouter() {
           <Route path={path.POLL_DETAIL} element={<PollDetail />} />
           <Route path={path.POLL_CREATE} element={<PollCreate />} />
           <Route path={path.MY_POLL} element={<MyPoll />} />
+          <Route path={path.LOGIN} element={<Login />} />
         </Route>
-        <Route path={path.LOGIN} element={<Login />} />
         <Route path="*" element={<div>Not Found</div>} />
       </Routes>
     </BrowserRouter>
