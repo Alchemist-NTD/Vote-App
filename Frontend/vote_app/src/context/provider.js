@@ -1,5 +1,24 @@
 import React from "react";
 
-const DataContext = React.createContext();
+const data = {
+  user: null,
+  setUser: () => {},
+  modal: {
+    isOpen: false,
+    title: "",
+    content: "",
+    handleClose: () => {},
+    handleSubmit: () => {},
+  },
+  setModal: () => {},
+  rejectModal: {
+    isOpen: false,
+    title: "",
+    content: "",
+    handleClose: () => {},
+  },
+  setRejectModal: () => {},
+};
+const DataContext = React.createContext(data);
 
 export default DataContext;

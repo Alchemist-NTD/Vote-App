@@ -2,18 +2,42 @@ import "./App.css";
 import React, { useState } from "react";
 import DataContext from "./context/provider";
 import AppRouter from "./route";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
-  const [user, setUser] = useState({
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: "https://robohash.org/3d69426afc09ac4d6259056e8f57571e?set=set4&bgset=&size=200x200"
+  const [user, setUser] = useState();
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    handleClose: () => {},
+    handleSubmit: () => {},
+  });
+  const [rejectModal, setRejectModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    handleClose: () => {},
   });
 
   return (
     <div className="App">
-      <DataContext.Provider value={{ user, setUser }}>
+      <DataContext.Provider
+        value={{ user, setUser, modal, setModal, setRejectModal, rejectModal }}
+      >
         <AppRouter />
+        <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       </DataContext.Provider>
     </div>
   );

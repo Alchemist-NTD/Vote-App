@@ -1,27 +1,39 @@
-import axios from 'axios';
+import instance from "./instance";
 
-const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
-});
+export const googleLogin = (token) => {
+  return instance.request({
+    method: "POST",
+    url: "/login",
+    data: { id_token: token },
+  });
+};
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+export const createPoll = (pollInfo) => {
+  return instance.request({
+    method: "POST",
+    url: "/poll/create/",
+    data: pollInfo
+  })
+}
 
+export const getAllPoll = () => {
+  return instance.request({
+    method: "GET",
+    url: "/pollInfo/"
+  })
+}
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+export const updatePollVote  = (id, select) => {
+  return instance.request({
+    method : "PUT",
+    url: `/poll/edit/${id}`,
+    data: select,
+  })
+}
 
-export default axiosInstance;
+export const fetchDetailPoll = (id) => {
+  return instance.request({
+    method: "GET",
+    url: `/polldetail/${id}`
+  })
+}
