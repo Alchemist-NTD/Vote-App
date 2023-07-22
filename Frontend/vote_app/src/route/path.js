@@ -1,5 +1,5 @@
 export const path = {
-  HOME: "/home/",
+  HOME: "/",
   LOGIN: "/login/",
   POLL_DETAIL: "/poll/detail/:id",
   POLL_CREATE: "/poll/create/",
