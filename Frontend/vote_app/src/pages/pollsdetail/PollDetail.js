@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Checkbox } from "@mui/material";
 import { TextField } from "@mui/material";
-import { updatePollVote, createVote, fetchDetailPoll } from "../../services";
+import { updatePollVote, createVote, fetchDetailPoll, fetchPollStatistic } from "../../services";
 import { useParams } from "react-router-dom";
 import useDataContext from "../../context/useDataContext";
 import { toast } from "react-toastify";
@@ -14,17 +14,21 @@ function PollDetail() {
     vote_context: id,
     vote_sequence: [],
   });
+  const [pollStatistic, setPollStatistic] = useState();
   const [checkExp, setCheckExp] = useState(false);
-
   const [vote_context, setVote_context] = useState();
   const [newOption, setNewOption] = useState("");
-
+  
   useEffect(() => {
     const fetchPollData = async () => {
       try {
-        const res = await fetchDetailPoll();
+        const res = await fetchDetailPoll(id);
+        const res2 = await fetchPollStatistic(id);
         if (res) {
-          setVote_context(res.data.data);
+          setVote_context(res.data);
+        }
+        if(res2){
+          setPollStatistic(res2.data)
         }
       } catch (error) {
         toast.error("Get poll detail failed!");
@@ -105,7 +109,7 @@ function PollDetail() {
     <div className="w-11/12 md:w-3/5 xl:w-1/2 mx-auto">
       <div className="border border-t-2 rounded-md p-2 lg:p-5">
         <div>
-          {/* For vote and add vote if allow */}
+
           <div className="mb-4">
             <h2 className="text-start text-base font-bold">
               {vote_context?.title}
@@ -114,7 +118,7 @@ function PollDetail() {
           {vote_context?.options.map((option, index) => (
             <div key={index} className="flex justify-start items-center">
               <Checkbox
-                checked={voteData.vote_sequence.includes(option)}
+                checked={voteData?.vote_sequence.includes(option)}
                 onChange={() => {
                   handleVoteChange(option);
                 }}
@@ -164,7 +168,7 @@ function PollDetail() {
           </div>
         </div>
 
-        <div>{/* Result */}</div>
+        {pollStatistic ? <div>Image statistic here</div> : <></>}
       </div>
     </div>
   );
