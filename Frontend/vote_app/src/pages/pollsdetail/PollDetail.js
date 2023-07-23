@@ -25,7 +25,8 @@ function PollDetail() {
         const res = await fetchDetailPoll(id);
         const res2 = await fetchPollStatistic(id);
         if (res) {
-          setVote_context(res.data);
+          setVote_context(res.data.vote_context);
+          setVoteData({...voteData, vote_sequence: res.data.vote_sequence})
         }
         if(res2){
           setPollStatistic(res2.data)
@@ -35,7 +36,7 @@ function PollDetail() {
       }
     };
     fetchPollData();
-  }, [isLoading]);
+  }, [isLoading, id]);
 
   useEffect(() => {
     if (vote_context && vote_context.date_expired) {
@@ -48,17 +49,14 @@ function PollDetail() {
     }
   }, [vote_context]);
 
-  const handleVoteChange = (option) => {
-    if (!voteData.vote_sequence.includes(option)) {
-      setVoteData({
-        ...voteData,
-        vote_sequence: [...voteData.vote_sequence, option],
-      });
+  const handleVoteChange = (index) => {
+    let vote_seq_temp = [...voteData.vote_sequence]
+    if(vote_seq_temp[index] === 1){
+      vote_seq_temp[index] = 0;
     } else {
-      let arrayVote = [...voteData.vote_sequence];
-      arrayVote = arrayVote.filter((value) => value !== option);
-      setVoteData({ ...voteData, vote_sequence: arrayVote });
+      vote_seq_temp[index] = 1;
     }
+    setVoteData({...voteData, vote_sequence: [...vote_seq_temp]})
   };
 
   const handleCreateOption = async () => {
@@ -118,9 +116,9 @@ function PollDetail() {
           {vote_context?.options.map((option, index) => (
             <div key={index} className="flex justify-start items-center">
               <Checkbox
-                checked={voteData?.vote_sequence.includes(option)}
+                checked={voteData?.vote_sequence[index]}
                 onChange={() => {
-                  handleVoteChange(option);
+                  handleVoteChange(index);
                 }}
               />
               <p>{option}</p>
@@ -167,7 +165,9 @@ function PollDetail() {
             </Button>
           </div>
         </div>
-
+        <div>
+          <h2 className="text-start">Your current vote</h2>
+        </div>
         {pollStatistic ? <div>Image statistic here</div> : <></>}
       </div>
     </div>
