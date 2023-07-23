@@ -85,24 +85,23 @@ function PollDetail() {
 
   const submitPoll = async () => {
     const countSelect = voteData?.vote_sequence.reduce(
-      (acc, element) => acc + (element === 1 ? 1 : 0), 0);
+      (acc, element) => acc + (element === 1 ? 1 : 0),
+      0
+    );
     if (!countSelect) {
       toast.error("Please choose option!");
-    }
-
-    if (!vote_context.is_multiple_vote_context && countSelect > 1) {
+    } else if (!vote_context.is_multiple_vote_context && countSelect > 1) {
       toast.error("You must choose an option, please!");
-      return;
-    }
-
-    try {
-      const res = await createVote(voteData);
-      if (res.status === 200) {
-        toast.success("Vote successfully!");
-        setIsLoading(!isLoading);
+    } else {
+      try {
+        const res = await createVote(voteData);
+        if (res.status === 200) {
+          toast.success("Vote successfully!");
+          setIsLoading(!isLoading);
+        }
+      } catch (error) {
+        toast.error("Vote failed!");
       }
-    } catch (error) {
-      toast.error("Vote failed!");
     }
   };
 
