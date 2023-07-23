@@ -1,0 +1,112 @@
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class JWTService:
+    @staticmethod
+    def generate_token(user) -> RefreshToken:
+        return RefreshToken.for_user(user)
+
+
+
+
+import requests
+from google.auth.transport.requests import Request as GoogleAuthRequest
+from google.oauth2.id_token import verify_oauth2_token
+
+
+class GoogleOauthService:
+    google_auth_request = GoogleAuthRequest()
+
+    @classmethod
+    def get_google_user(cls, id_token):
+        idinfo = verify_oauth2_token(
+            id_token,
+            cls.google_auth_request,
+        )
+        return idinfo
+
+Hiếu
+Vũ Minh Hiếu
+
+from django.conf import settings
+from drf_spectacular.utils import extend_schema
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_403_FORBIDDEN
+from rest_framework.views import APIView
+
+from api.models import User
+from api.serializers.login import LoginRequestData, LoginResponseData
+from api.services.google_oauth2 import GoogleOauthService
+from api.services.jwt import JWTService
+
+
+class Login(APIView):
+    authentication_classes = []
+
+    @extend_schema(
+        request=LoginRequestData,
+        description="Login",
+        methods=["POST"],
+    )
+    def post(self, request: Request):
+        data = request.data
+
+        # validate
+        serializer = LoginRequestData(data=data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+        id_token = validated_data.get("id_token")
+
+        idinfo = GoogleOauthService.get_google_user(id_token)
+
+        # TODO:
+        # check host domain
+        # if a email with 'gmail' host domain (gmail.com),
+        # idinfo doesn't include 'hd' key
+        # hd = idinfo["hd"]
+        # if "hd" not in idinfo or hd != settings.HOST_DOMAIN_ZINZA:
+        #     return Response(
+        #         data={"message": "Only organization accounts are able to access"},
+        #         status=HTTP_403_FORBIDDEN,
+        #     )
+
+        # get google idinfo
+        email = idinfo["email"]
+        first_name = idinfo["family_name"]
+        last_name = idinfo["given_name"]
+        avatar = idinfo["picture"]
+        username = idinfo["email"].split("@")[0]
+
+        try:
+            user = User.objects.search_user_by_email(email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                avatar=avatar,
+                username=username,
+            )
+
+        refresh_token = JWTService.generate_token(user)
+
+        response = Response(status=HTTP_200_OK)
+        response.set_cookie(
+            "access",
+            str(refresh_token.access_token),
+            expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
+            httponly=True,
+            samesite="strict",
+        )
+        response.set_cookie(
+            "refresh",
+            str(refresh_token),
+            expires=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
+            httponly=True,
+            samesite="strict",
+        )
+        return response
+
+với anh nhớ tạo 1 hàm để get lại access token khi gửi refresh bằng build in của jwt nữa
+em viết trong con service.js ấy

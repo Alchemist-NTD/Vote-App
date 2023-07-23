@@ -14,6 +14,7 @@ function MyPoll() {
         const res = await getMyPoll();
         if (res) {
           setMyPolls(res.data);
+          setMyPolls(res.data);
         }
       } catch (error) {
         if (isMounted) {
@@ -31,7 +32,7 @@ function MyPoll() {
     if (window.confirm("Are you sure to delete this poll?")) {
       try {
         const res = await deletePoll(id);
-        if (res.status === 200) {
+        if (res.status === 200 || res.status === 204) {
           toast.success("Delete poll successfully!");
           let newArray = [...myPolls];
           newArray = newArray.filter((poll) => poll.id !== id);

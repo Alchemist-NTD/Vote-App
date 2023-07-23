@@ -6,6 +6,6 @@ from django.contrib.postgres.fields import ArrayField
 
 class Vote(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, to_field='id', default=999999)
-    vote_context = models.ForeignKey(VoteContext, on_delete=models.CASCADE, to_field='id', default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, to_field='id', default=0)
+    vote_context = models.ForeignKey(VoteContext, on_delete=models.CASCADE, to_field='id', default=0)
     vote_sequence = ArrayField(models.IntegerField(default=0))

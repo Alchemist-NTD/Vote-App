@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 function PollCreate() {
+  console.log(process.env.REACT_APP_API_BASE_URL)
   const schema = yup.object({
     title: yup.string().required("Title is required!"),
   });
@@ -31,8 +32,8 @@ function PollCreate() {
   } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
   const [pollData, setPollData] = useState({
-    is_multivote: false,
-    allow_create_new_option: false,
+    is_multiple_vote_context: false,
+    allow_create_extra_ops: false,
     date_expired: null,
     options: [""],
     title: "",
@@ -69,8 +70,8 @@ function PollCreate() {
         const response = await createPoll(data);
         if (response.status === 200) {
           setPollData({
-            is_multivote: false,
-            allow_create_new_option: false,
+            is_multiple_vote_context: false,
+            allow_create_extra_ops: false,
             date_expired: null,
             options: [""],
             title: "",
@@ -118,7 +119,7 @@ function PollCreate() {
             <span className="text-base font-bold">MultiVote Choice</span>
             <Checkbox
               onChange={(event) =>
-                setPollData({ ...pollData, is_multivote: event.target.checked })
+                setPollData({ ...pollData, is_multiple_vote_context: event.target.checked })
               }
             />
           </div>
@@ -129,7 +130,7 @@ function PollCreate() {
               onChange={(event) =>
                 setPollData({
                   ...pollData,
-                  allow_create_new_option: event.target.checked,
+                  allow_create_extra_ops: event.target.checked,
                 })
               }
             />
@@ -186,7 +187,7 @@ function PollCreate() {
                   <DateTimePicker
                     value={pollData.date_expired}
                     onChange={(newValue) =>
-                      setPollData({ ...pollData, date_expired: newValue })
+                      setPollData({ ...pollData, date_expired: newValue})
                     }
                   />
                 </DemoContainer>

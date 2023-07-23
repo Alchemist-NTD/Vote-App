@@ -31,7 +31,7 @@ function HomePage() {
         <h2 className="text-start font-semibold text-xl">Poll avaiable</h2>
       </div>
       <div>
-        {polls.map((poll) => (
+        {polls && polls.map((poll) => (
           <div
             key={poll?.id}
             className="flex justify-start w-full md:w-1/2 border-2 rounded-md shadow-sm cursor-pointer px-2 py-3 my-3"

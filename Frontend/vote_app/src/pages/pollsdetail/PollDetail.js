@@ -19,7 +19,6 @@ function PollDetail() {
     vote_context: id,
     vote_sequence: [],
   });
-  const [pollStatistic, setPollStatistic] = useState();
   const [checkExp, setCheckExp] = useState(false);
   const [vote_context, setVote_context] = useState();
   const [newOption, setNewOption] = useState("");
@@ -28,14 +27,12 @@ function PollDetail() {
     const fetchPollData = async () => {
       try {
         const res = await fetchDetailPoll(id);
-        const res2 = await fetchPollStatistic(id);
+
         if (res) {
           setVote_context(res.data.vote_context);
           setVoteData({ ...voteData, vote_sequence: res.data.vote_sequence });
         }
-        if (res2) {
-          setPollStatistic(res2.data);
-        }
+
       } catch (error) {
         toast.error("Get poll detail failed!");
       }
@@ -167,7 +164,10 @@ function PollDetail() {
             </Button>
           </div>
         </div>
-        {pollStatistic ? <div>Image statistic here</div> : <></>}
+        <div>
+          <h2 className="text-start">Your current vote</h2>
+        </div>
+        {id ? <div> <img src={process.env.REACT_APP_API_BASE_URL + '/poll/statistic/1/' + id} alt="statistic" /> </div> : <></>}
       </div>
     </div>
   );
