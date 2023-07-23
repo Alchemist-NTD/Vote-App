@@ -4,40 +4,31 @@ import DataContext from "./context/provider";
 import AppRouter from "./route";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 function App() {
   const [user, setUser] = useState();
-  const [modal, setModal] = useState({
-    isOpen: false,
-    title: "",
-    content: "",
-    handleClose: () => {},
-    handleSubmit: () => {},
-  });
-  const [rejectModal, setRejectModal] = useState({
-    isOpen: false,
-    title: "",
-    content: "",
-    handleClose: () => {},
-  });
-
+  const [isFetchUser, setIsFetchUser] = useState(false);
   return (
     <div className="App">
       <DataContext.Provider
-        value={{ user, setUser, modal, setModal, setRejectModal, rejectModal }}
+        value={{ user, setUser, isFetchUser, setIsFetchUser }}
       >
-        <AppRouter />
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+          <AppRouter />
+        </GoogleOAuthProvider>
+
         <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </DataContext.Provider>
     </div>
   );

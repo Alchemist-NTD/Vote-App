@@ -5,27 +5,22 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Checkbox } from "@mui/material";
-import RejectModal from "../../components/modal/RejectModal";
-import BasicModal from "../../components/modal/Modal";
-import useDataContext from "../../context/useDataContext";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
-import dayjs from "dayjs";
 import ClearIcon from "@mui/icons-material/Clear";
 import { createPoll } from "../../services";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+
 function PollCreate() {
-  const navigate = useNavigate();
-  const { modal, setModal } = useDataContext();
   const schema = yup.object({
     title: yup.string().required("Title is required!"),
   });
@@ -38,7 +33,7 @@ function PollCreate() {
   const [pollData, setPollData] = useState({
     is_multivote: false,
     allow_create_new_option: false,
-    time_exp: null,
+    date_expired: null,
     options: [""],
     title: "",
   });
@@ -60,24 +55,17 @@ function PollCreate() {
   };
 
   const onSubmit = async () => {
-    // setModal({...modal, isOpen: true, title : "Lolllll"})
     const data = {
       ...pollData,
-      time_exp: dayjs(pollData.time_exp).format("DD-MM-YYYY HH:mm:ss"),
+      date_expired: dayjs(pollData.date_expired).format("DD-MM-YYYY HH:mm:ss"),
     };
 
     if (
       data.options.includes("") ||
-      data.time_exp === "Invalid Date" ||
-      !data.time_exp
+      data.date_expired === "Invalid Date" ||
+      !data.date_expired
     ) {
-      setModal({
-        ...modal,
-        isOpen: true,
-        title: "Poll is no completed",
-        content:
-          "Please complete the empty field of options or choose datetime!",
-      });
+      toast.error("Please complete the empty field of options or choose datetime!");
     } else {
       try {
         const response = await createPoll(data);
@@ -85,17 +73,16 @@ function PollCreate() {
           setPollData({
             is_multivote: false,
             allow_create_new_option: false,
-            time_exp: null,
+            date_expired: null,
             options: [""],
             title: "",
           });
           toast.success("Create Poll Successfully!");
         }
-      } catch(error) {
+      } catch (error) {
         toast.error("Create Poll Error!");
       }
     }
-    console.log(data);
   };
   return (
     <div className="w-11/12 md:w-3/5 xl:w-1/2 mx-auto">
@@ -191,16 +178,16 @@ function PollCreate() {
           </div>
           <div className="">
             <div className="flex justify-start">
-              <h2 className="text-base font-bold">Choose Time Poll Expired</h2>
+              <h2 className="text-base font-bold">Choose Time Expired</h2>
             </div>
 
             <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DatePicker"]}>
                   <DateTimePicker
-                    value={pollData.time_exp}
+                    value={pollData.date_expired}
                     onChange={(newValue) =>
-                      setPollData({ ...pollData, time_exp: newValue })
+                      setPollData({ ...pollData, date_expired: newValue })
                     }
                   />
                 </DemoContainer>
@@ -214,8 +201,6 @@ function PollCreate() {
           </div>
         </form>
       </div>
-
-      <BasicModal />
     </div>
   );
 }

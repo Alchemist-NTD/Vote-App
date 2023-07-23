@@ -1,17 +1,28 @@
 import instance from "./instance";
 
-export const googleLogin = (token) => {
+export const authGoogleLogin = (token) => {
   return instance.request({
     method: "POST",
-    url: "/login",
+    url: "/login/",
     data: { id_token: token },
   });
 };
 
+export const fetchUser = () => {
+  return instance.get('/userInfo/')
+}
+export const getRefreshtoken = (token) => {
+  return instance.request({
+    method: "POST",
+    url: "'/token/refresh/",
+    data: { refresh: token },
+  });
+} 
+
 export const createPoll = (pollInfo) => {
   return instance.request({
     method: "POST",
-    url: "/poll/create/",
+    url: "/vote/create/",
     data: pollInfo
   })
 }
@@ -23,17 +34,33 @@ export const getAllPoll = () => {
   })
 }
 
-export const updatePollVote  = (id, select) => {
+export const updatePollVote  = (id, option) => {
   return instance.request({
     method : "PUT",
     url: `/poll/edit/${id}`,
-    data: select,
+    data: {new_option: option},
   })
 }
+
 
 export const fetchDetailPoll = (id) => {
   return instance.request({
     method: "GET",
-    url: `/polldetail/${id}`
+    url: `/poll/detail/${id}`
+  })
+}
+
+export const getMyPoll = () => {
+  return instance.get('/poll/');
+}
+export const deletePoll = (id) => {
+  return instance.delete(`/poll/${id}`);
+}
+
+export const createVote = (vote) => {
+  return instance.request({
+    method : "POST",
+    url: '/vote/',
+    data: vote
   })
 }
