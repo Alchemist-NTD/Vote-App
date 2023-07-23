@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Checkbox } from "@mui/material";
 import { TextField } from "@mui/material";
-import { updatePollVote, createVote, fetchDetailPoll, fetchPollStatistic } from "../../services";
+import {
+  updatePollVote,
+  createVote,
+  fetchDetailPoll,
+  fetchPollStatistic,
+} from "../../services";
 import { useParams } from "react-router-dom";
 import useDataContext from "../../context/useDataContext";
 import { toast } from "react-toastify";
@@ -9,7 +14,7 @@ import dayjs from "dayjs";
 
 function PollDetail() {
   const { id } = useParams();
-  const {isLoading, setIsLoading} = useDataContext();
+  const { isLoading, setIsLoading } = useDataContext();
   const [voteData, setVoteData] = useState({
     vote_context: id,
     vote_sequence: [],
@@ -18,7 +23,7 @@ function PollDetail() {
   const [checkExp, setCheckExp] = useState(false);
   const [vote_context, setVote_context] = useState();
   const [newOption, setNewOption] = useState("");
-  
+
   useEffect(() => {
     const fetchPollData = async () => {
       try {
@@ -26,10 +31,10 @@ function PollDetail() {
         const res2 = await fetchPollStatistic(id);
         if (res) {
           setVote_context(res.data.vote_context);
-          setVoteData({...voteData, vote_sequence: res.data.vote_sequence})
+          setVoteData({ ...voteData, vote_sequence: res.data.vote_sequence });
         }
-        if(res2){
-          setPollStatistic(res2.data)
+        if (res2) {
+          setPollStatistic(res2.data);
         }
       } catch (error) {
         toast.error("Get poll detail failed!");
@@ -50,13 +55,13 @@ function PollDetail() {
   }, [vote_context]);
 
   const handleVoteChange = (index) => {
-    let vote_seq_temp = [...voteData.vote_sequence]
-    if(vote_seq_temp[index] === 1){
+    let vote_seq_temp = [...voteData.vote_sequence];
+    if (vote_seq_temp[index] === 1) {
       vote_seq_temp[index] = 0;
     } else {
       vote_seq_temp[index] = 1;
     }
-    setVoteData({...voteData, vote_sequence: [...vote_seq_temp]})
+    setVoteData({ ...voteData, vote_sequence: [...vote_seq_temp] });
   };
 
   const handleCreateOption = async () => {
@@ -79,15 +84,13 @@ function PollDetail() {
   };
 
   const submitPoll = async () => {
-    if (!voteData.vote_sequence.length) {
+    const countSelect = voteData?.vote_sequence.reduce(
+      (acc, element) => acc + (element === 1 ? 1 : 0), 0);
+    if (!countSelect) {
       toast.error("Please choose option!");
     }
 
-    if (
-      !vote_context.is_multiple_vote_context &&
-      voteData.vote_sequence.length &&
-      voteData.vote_sequence.length < 2
-    ) {
+    if (!vote_context.is_multiple_vote_context && countSelect > 1) {
       toast.error("You must choose an option, please!");
       return;
     }
@@ -107,7 +110,6 @@ function PollDetail() {
     <div className="w-11/12 md:w-3/5 xl:w-1/2 mx-auto">
       <div className="border border-t-2 rounded-md p-2 lg:p-5">
         <div>
-
           <div className="mb-4">
             <h2 className="text-start text-base font-bold">
               {vote_context?.title}
@@ -164,9 +166,6 @@ function PollDetail() {
               Submit
             </Button>
           </div>
-        </div>
-        <div>
-          <h2 className="text-start">Your current vote</h2>
         </div>
         {pollStatistic ? <div>Image statistic here</div> : <></>}
       </div>
