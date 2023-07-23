@@ -18,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import { createPoll } from "../../services";
 import { toast } from "react-toastify";
-import dayjs from "dayjs";
+
 
 function PollCreate() {
   const schema = yup.object({
@@ -57,15 +57,11 @@ function PollCreate() {
   const onSubmit = async () => {
     const data = {
       ...pollData,
-      date_expired: dayjs(pollData.date_expired).format("DD-MM-YYYY HH:mm:ss"),
+      date_expired: pollData.date_expired ? pollData.date_expired.toISOString() : null,
     };
 
-    if (
-      data.options.includes("") ||
-      data.date_expired === "Invalid Date" ||
-      !data.date_expired
-    ) {
-      toast.error("Please complete the empty field of options or choose datetime!");
+    if (data.options.includes("")) {
+      toast.error("Please complete the empty field of options!");
     } else {
       try {
         const response = await createPoll(data);

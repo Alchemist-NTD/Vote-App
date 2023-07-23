@@ -8,9 +8,6 @@ export const authGoogleLogin = (token) => {
   });
 };
 
-export const fetchUser = () => {
-  return instance.get('/userInfo/')
-}
 export const getRefreshtoken = (token) => {
   return instance.request({
     method: "POST",

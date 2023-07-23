@@ -1,8 +1,8 @@
 import React from "react";
 
 const data = {
-  user: null,
-  setUser: () => {},
+  isLoading : false,
+  setIsLoading: false,
   isFetchUser: false,
   setIsFetchUser : () => {}
 };
