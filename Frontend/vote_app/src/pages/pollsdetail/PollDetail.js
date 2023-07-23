@@ -87,7 +87,7 @@ function PollDetail() {
     if (!countSelect) {
       toast.error("Please choose option!");
     } else if (!vote_context.is_multiple_vote_context && countSelect > 1) {
-      toast.error("You must choose an option, please!");
+      toast.error("You must choose just 1 option, please!");
       return;
     } else {
       try {
