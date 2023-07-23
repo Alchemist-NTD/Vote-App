@@ -6,12 +6,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 function App() {
-  const [user, setUser] = useState();
   const [isFetchUser, setIsFetchUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="App">
       <DataContext.Provider
-        value={{ user, setUser, isFetchUser, setIsFetchUser }}
+        value={{ isFetchUser, setIsFetchUser, isLoading, setIsLoading }}
       >
         <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
           <AppRouter />

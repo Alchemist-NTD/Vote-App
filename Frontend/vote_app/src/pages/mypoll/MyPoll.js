@@ -4,20 +4,9 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const mockData = [
-  {
-    id: 1,
-    title:
-      "Hôm nay ăn gì? It very comfotable for work. So what we should eat in Friday night?",
-  },
-  {
-    id: 2,
-    title: "Liên hoan D1",
-  },
-];
-
 function MyPoll() {
-  const [myPolls, setMyPolls] = useState(mockData);
+  const [myPolls, setMyPolls] = useState([]);
+  
   useEffect(() => {
     let isMounted = true;
     const fetchDataMyPoll = async () => {
@@ -37,13 +26,14 @@ function MyPoll() {
       isMounted = false;
     };
   }, []);
+
   const handleDeletePoll = async (id) => {
     if (window.confirm("Are you sure to delete this poll?")) {
       try {
         const res = await deletePoll(id);
         if (res.status === 200) {
           toast.success("Delete poll successfully!");
-          let newArray = [...mockData];
+          let newArray = [...myPolls];
           newArray = newArray.filter((poll) => poll.id !== id);
           setMyPolls(newArray);
         }
