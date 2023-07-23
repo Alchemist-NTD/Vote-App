@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 function PollCreate() {
-  console.log(process.env.REACT_APP_API_BASE_URL)
+
   const schema = yup.object({
     title: yup.string().required("Title is required!"),
   });

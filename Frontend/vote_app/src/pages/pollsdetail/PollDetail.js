@@ -16,7 +16,7 @@ function PollDetail() {
   const { id } = useParams();
   const { isLoading, setIsLoading } = useDataContext();
   const [voteData, setVoteData] = useState({
-    vote_context: id,
+    vote_context: Number(id),
     vote_sequence: [],
   });
   const [checkExp, setCheckExp] = useState(false);
@@ -32,7 +32,6 @@ function PollDetail() {
           setVote_context(res.data.vote_context);
           setVoteData({ ...voteData, vote_sequence: res.data.vote_sequence });
         }
-
       } catch (error) {
         toast.error("Get poll detail failed!");
       }
@@ -82,24 +81,24 @@ function PollDetail() {
 
   const submitPoll = async () => {
     const countSelect = voteData?.vote_sequence.reduce(
-      (acc, element) => acc + (element === 1 ? 1 : 0), 0);
+      (acc, element) => acc + (element === 1 ? 1 : 0),
+      0
+    );
     if (!countSelect) {
       toast.error("Please choose option!");
-    }
-
-    if (!vote_context.is_multiple_vote_context && countSelect > 1) {
+    } else if (!vote_context.is_multiple_vote_context && countSelect > 1) {
       toast.error("You must choose an option, please!");
       return;
-    }
-
-    try {
-      const res = await createVote(voteData);
-      if (res.status === 200) {
-        toast.success("Vote successfully!");
-        setIsLoading(!isLoading);
+    } else {
+      try {
+        const res = await createVote(voteData);
+        if (res.status === 200) {
+          toast.success("Vote successfully!");
+          setIsLoading(!isLoading);
+        }
+      } catch (error) {
+        toast.error("Vote failed!");
       }
-    } catch (error) {
-      toast.error("Vote failed!");
     }
   };
 
@@ -167,7 +166,19 @@ function PollDetail() {
         <div>
           <h2 className="text-start">Your current vote</h2>
         </div>
-        {id ? <div> <img src={process.env.REACT_APP_API_BASE_URL + '/poll/statistic/1/' + id} alt="statistic" /> </div> : <></>}
+        {id ? (
+          <div>
+            {" "}
+            <img
+              src={
+                process.env.REACT_APP_API_BASE_URL + "/poll/statistic/1/" + id
+              }
+              alt="statistic"
+            />{" "}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
