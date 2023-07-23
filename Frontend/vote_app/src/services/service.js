@@ -47,6 +47,12 @@ export const fetchDetailPoll = (id) => {
   })
 }
 
+export const fetchPollStatistic = (id) => {
+  return instance.request({
+    method: "GET",
+    url: `/poll/statistic/1/${id}`
+  })
+}
 export const getMyPoll = () => {
   return instance.get('/poll/');
 }

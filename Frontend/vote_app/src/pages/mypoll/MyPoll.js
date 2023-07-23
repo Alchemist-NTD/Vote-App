@@ -13,7 +13,7 @@ function MyPoll() {
       try {
         const res = await getMyPoll();
         if (res) {
-          setMyPolls(res.data.data);
+          setMyPolls(res.data);
         }
       } catch (error) {
         if (isMounted) {
@@ -50,11 +50,11 @@ function MyPoll() {
       <div>
         {myPolls.map((poll) => (
           <div
-            key={poll.id}
+            key={poll?.id}
             className="flex justify-between gap-5 w-full md:w-1/2 border-2 rounded-md shadow-sm cursor-pointer px-2 py-3 my-3"
           >
-            <Link to={`/poll/detail/${poll.id}`}>{poll.title}</Link>
-            <span onClick={() => handleDeletePoll(poll.id)}>
+            <Link to={`/poll/detail/${poll?.id}`}>{poll?.title}</Link>
+            <span onClick={() => handleDeletePoll(poll?.id)}>
               <ClearIcon />
             </span>
           </div>
