@@ -18,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import { createPoll } from "../../services";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 
 function PollCreate() {
   const schema = yup.object({
@@ -29,7 +29,7 @@ function PollCreate() {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-
+  const navigate = useNavigate();
   const [pollData, setPollData] = useState({
     is_multivote: false,
     allow_create_new_option: false,
@@ -57,7 +57,9 @@ function PollCreate() {
   const onSubmit = async () => {
     const data = {
       ...pollData,
-      date_expired: pollData.date_expired ? pollData.date_expired.toISOString() : null,
+      date_expired: pollData.date_expired
+        ? pollData.date_expired.toISOString()
+        : null,
     };
 
     if (data.options.includes("")) {
@@ -74,6 +76,7 @@ function PollCreate() {
             title: "",
           });
           toast.success("Create Poll Successfully!");
+          navigate("/");
         }
       } catch (error) {
         toast.error("Create Poll Error!");

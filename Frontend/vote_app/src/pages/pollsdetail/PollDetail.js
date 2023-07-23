@@ -84,16 +84,13 @@ function PollDetail() {
   };
 
   const submitPoll = async () => {
-
-    const countSelect = voteData?.vote_sequence.reduce((acc, element) => acc + (element === 1 ? 1 : 0), 0);
+    const countSelect = voteData?.vote_sequence.reduce(
+      (acc, element) => acc + (element === 1 ? 1 : 0), 0);
     if (!countSelect) {
       toast.error("Please choose option!");
     }
 
-    if (
-      !vote_context.is_multiple_vote_context &&
-      countSelect > 1
-    ) {
+    if (!vote_context.is_multiple_vote_context && countSelect > 1) {
       toast.error("You must choose an option, please!");
       return;
     }
@@ -113,7 +110,6 @@ function PollDetail() {
     <div className="w-11/12 md:w-3/5 xl:w-1/2 mx-auto">
       <div className="border border-t-2 rounded-md p-2 lg:p-5">
         <div>
-
           <div className="mb-4">
             <h2 className="text-start text-base font-bold">
               {vote_context?.title}
