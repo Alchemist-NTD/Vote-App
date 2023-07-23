@@ -37,7 +37,8 @@ class Login(APIView):
             status=HTTP_200_OK, 
             data={
             'refresh': str(refresh_token),
-            'access': str(refresh_token.access_token)
+            'access': str(refresh_token.access_token),
+            'name': users.first().name
             }
         )
         return response

@@ -7,6 +7,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from ..models import *
 from ..serializers import *
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import io, json
 from PIL import Image
@@ -114,12 +115,14 @@ class RetrieveVoteContextStatistic1(generics.RetrieveAPIView):
         
         options = vote_context.options
         y_pos = np.arange(len(options))
-        x_axis = np.ones(shape=(len(options),))
+        x_axis = vote_sequences
         
-        plt.figure(figsize = (3 * len(options), 10))
+        plt.figure(figsize = (20, 15))
+        plt.rcParams.update({'font.size': 22})
         
         plt.bar(y_pos, x_axis, align='center', alpha=0.5)
         plt.xticks(y_pos, options)
+        plt.yticks(vote_sequences)
         plt.ylabel('Vote Count')
         plt.title(vote_context.title)
         buf = io.BytesIO()

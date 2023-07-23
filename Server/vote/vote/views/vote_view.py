@@ -17,7 +17,6 @@ class VoteUpdate(generics.UpdateAPIView):
         try:
             vote_context = VoteContext.objects.filter(id=request.data['vote_context']).last()
             vote_sequence = request.data['vote_sequence']
-            print(vote_sequence)
             vote = Vote.objects.filter(user=request.user, vote_context=vote_context).last()
             vote.vote_sequence = vote_sequence
             vote.save()

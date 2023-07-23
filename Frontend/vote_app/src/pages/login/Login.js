@@ -13,6 +13,7 @@ function Login() {
       if (res.status === 200) {
         Cookies.set("access", res.data.access, { expires: (600 / 24) * 3600 });
         Cookies.set("refresh", res.data.refresh, { expires: 7 });
+        Cookies.set("name", res.data.name)
         navigate("/");
       }
     } catch (error) {

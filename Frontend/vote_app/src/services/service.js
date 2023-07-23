@@ -7,7 +7,7 @@ export const authGoogleLogin = (token) => {
     data: { id_token: token },
   });
 };
-
+// ok
 export const getRefreshtoken = (token) => {
   return instance.request({
     method: "POST",
@@ -67,5 +67,13 @@ export const createVote = (vote) => {
     method : "PUT",
     url: '/vote/',
     data: vote
+  })
+}
+// ok
+export const logout = (token) => {
+  return instance.request({
+    method : "POST",
+    url: '/token/blacklist/',
+    data: token
   })
 }

@@ -3,8 +3,11 @@ import PollOutlinedIcon from "@mui/icons-material/PollOutlined";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import { logout } from "../../services/service";
 import Cookies from "js-cookie"
 import "./header.css";
+import { toast } from "react-toastify";
+
 function Header() {
   const navigate = useNavigate();
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -15,9 +18,21 @@ function Header() {
     navigate("");
   };
 
-  const handleLogout= () => {
+  const handleLogout= async () => {
+    try {
+      const token = {
+        refresh: Cookies.get('refresh')
+      }
+      const res = await logout(token);
+      if (res.status === 200) {
+        toast.success("Logout successfully!");
+      }
+    } catch (error) {
+      toast.error("Logout failed!");
+    }
     Cookies.remove('access');
     Cookies.remove('refresh');
+    Cookies.remove('name');
     navigate('/login/');
   }
   return (
@@ -43,6 +58,7 @@ function Header() {
             </Link>
           </div>
         </div>
+        {Cookies.get('name') && <div>Hi, {Cookies.get('name')}</div>}
         <div>
           <Button onClick={handleLogout} variant="contained" color="inherit">Log Out</Button>
         </div>

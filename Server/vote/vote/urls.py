@@ -1,6 +1,12 @@
 from django.contrib import admin
 from django.urls import path
 from .views import *
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+    TokenBlacklistView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,4 +19,6 @@ urlpatterns = [
     path('poll/detail/<int:pk>', VoteContextRetrieve.as_view(), name='retrieve_vote_context'),
     path('poll/edit/<int:pk>', VoteContextUpdate.as_view(), name='update_vote_context'),
     path('vote/', VoteUpdate.as_view(), name='update_vote'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
 ]
