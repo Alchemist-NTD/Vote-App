@@ -4,12 +4,12 @@ import { TextField } from "@mui/material";
 import { updatePollVote, createVote, fetchDetailPoll } from "../../services";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import dayjs from "dayjs";
 const fakeData = {
   id: 1,
   options: ["1", "2", "3"],
   title: "What will eat today?",
-  time_exp: "20-07-2023 15:30:00",
+  date_expired: "25-07-2023 15:30:00",
   is_multiple_vote_context: false,
   allow_create_extra_ops: true,
 };
@@ -26,16 +26,27 @@ function PollDetail() {
   const [newOption, setNewOption] = useState("");
   
   useEffect(() => {
-    if(vote_context.time_exp){
-      const dateTime = new Date(vote_context.time_exp);
-      const currentDate = new Date();
-      console.log(dateTime);
+    const fetchPollData = async () => {
+      try {
+        
+      } catch (error) {
+        
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if(vote_context && vote_context.date_expired){
+      const dateTime = dayjs(vote_context?.date_expired, "DD-MM-YYYY HH:mm:ss");
+      const currentDate = dayjs();
+
       if(dateTime < currentDate){
         setCheckExp(true);
         toast.error('This poll expired!');
       }
     }
   }, [vote_context]);
+
   const handleVoteChange = (option) => {
     if (!voteData.vote_sequence.includes(option)) {
       setVoteData({
@@ -57,6 +68,7 @@ function PollDetail() {
         const response = await updatePollVote(id, newOption);
         if (response.status === 200) {
           toast.success("Update vote option successfully!");
+          setVote_context({...vote_context, options: [...vote_context.options, newOption]})
         }
       } catch (error) {
         toast.error("Create vote option error!");
@@ -95,10 +107,10 @@ function PollDetail() {
           {/* For vote and add vote if allow */}
           <div className="mb-4">
             <h2 className="text-start text-base font-bold">
-              {vote_context.title}
+              {vote_context?.title}
             </h2>
           </div>
-          {vote_context.options.map((option, index) => (
+          {vote_context?.options.map((option, index) => (
             <div key={index} className="flex justify-start items-center">
               <Checkbox
                 checked={voteData.vote_sequence.includes(option)}
@@ -110,7 +122,7 @@ function PollDetail() {
             </div>
           ))}
           <div>
-            {vote_context.allow_create_extra_ops ? (
+            {vote_context?.allow_create_extra_ops ? (
               <div>
                 <div className="flex justify-start mb-4">
                   <h3 className="font-bold">Create a new option</h3>
@@ -129,6 +141,7 @@ function PollDetail() {
                     onClick={handleCreateOption}
                     variant="contained"
                     color="primary"
+                    disabled={checkExp}
                   >
                     Create
                   </Button>
@@ -140,7 +153,7 @@ function PollDetail() {
           </div>
 
           <div className="my-3 flex justify-start items-center">
-            <Button variant="contained" onClick={() => submitPoll()}>
+            <Button variant="contained" onClick={() => submitPoll()} disabled={checkExp}>
               Submit
             </Button>
           </div>

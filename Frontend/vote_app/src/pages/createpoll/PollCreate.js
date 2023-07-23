@@ -18,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import { createPoll } from "../../services";
 import { toast } from "react-toastify";
-
+import dayjs from "dayjs";
 
 function PollCreate() {
   const schema = yup.object({
@@ -57,7 +57,7 @@ function PollCreate() {
   const onSubmit = async () => {
     const data = {
       ...pollData,
-      date_expired: pollData.date_expired.toISOString(),
+      date_expired: dayjs(pollData.date_expired).format("DD-MM-YYYY HH:mm:ss"),
     };
 
     if (
@@ -178,7 +178,7 @@ function PollCreate() {
           </div>
           <div className="">
             <div className="flex justify-start">
-              <h2 className="text-base font-bold">Choose Time Poll Expired</h2>
+              <h2 className="text-base font-bold">Choose Time Expired</h2>
             </div>
 
             <div>

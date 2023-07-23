@@ -22,7 +22,7 @@ export const getRefreshtoken = (token) => {
 export const createPoll = (pollInfo) => {
   return instance.request({
     method: "POST",
-    url: "/poll/create/",
+    url: "/vote/create/",
     data: pollInfo
   })
 }
@@ -42,19 +42,21 @@ export const updatePollVote  = (id, option) => {
   })
 }
 
-export const deletePoll = (id) => {
-  return instance.delete(`/poll/${id}`);
-}
+
 export const fetchDetailPoll = (id) => {
   return instance.request({
     method: "GET",
-    url: `/polldetail/${id}`
+    url: `/poll/detail/${id}`
   })
 }
 
 export const getMyPoll = () => {
   return instance.get('/poll/');
 }
+export const deletePoll = (id) => {
+  return instance.delete(`/poll/${id}`);
+}
+
 export const createVote = (vote) => {
   return instance.request({
     method : "POST",
