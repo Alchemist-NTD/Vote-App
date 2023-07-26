@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import useDataContext from "../../context/useDataContext";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import Cookies from "js-cookie"
 
 function PollDetail() {
   const { id } = useParams();
@@ -60,6 +61,29 @@ function PollDetail() {
     setVoteData({ ...voteData, vote_sequence: [...vote_seq_temp] });
   };
 
+  const getStatistic = (id) => {
+    
+    const access_token = Cookies.get('access');
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/poll/statistic/1/${id}`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': access_token? `Bearer ${access_token}` : "",
+          },
+          }
+      )
+        .then(response => response.blob())
+        .then(image => {
+            // Create a local URL of that image
+            const localUrl = URL.createObjectURL(image);
+            setImageData(localUrl);
+        });
+    }
+
+  const [imageData, setImageData] = useState('');
+
+  useEffect(() => getStatistic(id), []);
+
   const handleCreateOption = async () => {
     if (!newOption) {
       toast.error("Please input new vote option!");
@@ -95,6 +119,7 @@ function PollDetail() {
         if (res.status === 200) {
           toast.success("Vote successfully!");
           setIsLoading(!isLoading);
+          getStatistic(id);
         }
       } catch (error) {
         toast.error("Vote failed!");
@@ -169,12 +194,8 @@ function PollDetail() {
         {id ? (
           <div>
             {" "}
-            <img
-              src={
-                process.env.REACT_APP_API_BASE_URL + "/poll/statistic/1/" + id
-              }
-              alt="statistic"
-            />{" "}
+            {imageData ? <img src={imageData} alt="statistic"/> : <p>Vote statistic is loading ...</p>}
+            {" "}
           </div>
         ) : (
           <></>
