@@ -2,13 +2,9 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY . .
+COPY ./vote_app/ ./
 
-RUN npm install
-
-RUN npx tailwindcss init
-
-COPY . .
+RUN npm i
 
 EXPOSE 3000
 
