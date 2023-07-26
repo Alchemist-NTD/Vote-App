@@ -82,7 +82,7 @@ function PollDetail() {
 
   const [imageData, setImageData] = useState('');
 
-  useEffect(() => getStatistic(id), []);
+  useEffect(() => getStatistic(id), [isLoading]);
 
   const handleCreateOption = async () => {
     if (!newOption) {
@@ -92,6 +92,7 @@ function PollDetail() {
         const response = await updatePollVote(id, newOption);
         if (response.status === 200) {
           toast.success("Update vote option successfully!");
+          setIsLoading(!isLoading);
           setVote_context({
             ...vote_context,
             options: [...vote_context.options, newOption],

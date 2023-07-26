@@ -11,6 +11,7 @@ import matplotlib
 import numpy as np
 import io, json
 from PIL import Image
+from textwrap import wrap
 
 
 class VoteContextCreate(generics.CreateAPIView):
@@ -114,6 +115,7 @@ class RetrieveVoteContextStatistic1(generics.RetrieveAPIView):
         vote_sequences = vote_results.sum(axis=0)
         
         options = vote_context.options
+        options = ['\n'.join(wrap(option, 12)) for option in options]
         y_pos = np.arange(len(options))
         x_axis = vote_sequences
         
