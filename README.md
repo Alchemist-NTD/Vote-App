@@ -56,3 +56,5 @@ after that, you can login by created username and password to <a href='http://lo
 - Enter the site <a href='http://localhost:8000/admin'>Admin</a> to access administrator site
 - Enter the site <a href='http://localhost:3000/'>Application</a> to access web app
 
+
+**AWS deployed**
