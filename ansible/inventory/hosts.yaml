@@ -1,0 +1,9 @@
+all:
+  hosts:
+    d-analysis:
+      ansible_host: 42.118.20.80
+      ip: 42.118.20.80
+      access_ip: 42.118.20.80
+    d-builder:
+    d-delivery:
+    d-pipeline:
