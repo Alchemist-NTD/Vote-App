@@ -13,7 +13,7 @@ module "jenkins-server" {
 
 module "builder-server" {
     source = "./module/ubuntu-22-04"
-    node_count    = 2
+    node_count    = 1
     node_type     = "builder"
     node_desc     = "builder-server"
     node_memory   = 4096

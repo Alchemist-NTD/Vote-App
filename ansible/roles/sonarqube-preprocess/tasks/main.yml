@@ -1,0 +1,94 @@
+---
+# tasks file for sonarqube-preprocess
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Add PostgreSQL repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/pgdg.list
+    line: 'deb http://apt.postgresql.org/pub/repos/apt {{ distribution_release }}-pgdg main'
+    create: yes
+
+- name: Download PostgreSQL GPG key
+  get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /etc/apt/trusted.gpg.d/pgdg.asc
+
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+
+- name: Install PostgreSQL and PostgreSQL-contrib packages
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+    state: present
+    update_cache: yes
+
+- name: Enable PostgreSQL service
+  systemd:
+    name: postgresql
+    enabled: yes
+
+- name: Change Postgres password for Sonarqube
+  shell: |
+    echo 'postgres:{{ sonarqube_password }}' | chpasswd
+
+- name: Config User and Database Sonarqube
+  become: yes
+  become_user: root
+  shell: |
+    su - postgres -c "createuser sonar"
+    su - postgres -c "psql -c \"ALTER USER sonar WITH ENCRYPTED PASSWORD 'sonar';\""
+    su - postgres -c "psql -c 'CREATE DATABASE sonarqube OWNER sonar;'"
+    su - postgres -c "psql -c 'GRANT ALL PRIVILEGES on DATABASE sonarqube to sonar;'"
+
+- name: Download Adoptium GPG key
+  get_url:
+    url: https://packages.adoptium.net/artifactory/api/gpg/key/public
+    dest: /etc/apt/keyrings/adoptium.asc
+
+- name: Add Adoptium repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/adoptium.list
+    line: 'deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb {{ distribution_release }} main'
+    create: yes
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install temurin
+  apt:
+    name:
+      - temurin-17-jdk
+    state: present
+    update_cache: yes
+
+- name: Update java config
+  become: yes
+  become_user: root
+  shell: |
+    update-alternatives --config java
+
+- name: Increase Limits kernel tune
+  become: yes
+  become_user: root
+  shell: |
+    echo "sonarqube   -   nofile   65536" >> /etc/security/limits.conf
+    echo "sonarqube   -   nproc    4096" >> /etc/security/limits.conf
+
+- name: Increase Mapped Memory Regions kernel tune
+  become: yes
+  become_user: root
+  shell: |
+    echo "vm.max_map_count = 262144" >> /etc/sysctl.conf
+
+- name: Wait for server to restart
+  reboot:
+    reboot_timeout: 3600
+

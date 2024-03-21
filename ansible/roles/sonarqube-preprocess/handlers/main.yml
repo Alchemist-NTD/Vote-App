@@ -1,0 +1,6 @@
+---
+# handlers file for sonarqube-preprocess
+- name: Wait for Server Reboot
+  wait_for_connection:
+    timeout: 300
+  when: reboot_result | success

@@ -1,0 +1,5 @@
+- hosts: d-ansible
+  remote_user: ubuntu
+  become: true
+  roles:
+    - remote-ansible

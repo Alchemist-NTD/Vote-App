@@ -1,22 +1,22 @@
 all:
   hosts:
     d-analysis:
-      ansible_host: {{ d_analysis_ip }}
-      ip: {{ d_analysis_ip }}
-      access_ip: {{ d_analysis_ip }}
+      ansible_host: "{{ d_analysis_ip }}"
+      ip: "{{ d_analysis_ip }}"
+      access_ip: "{{ d_analysis_ip }}"
     d-builder:
-      ansible_host: {{ d_builder_ip }}
-      ip: {{ d_builder_ip }}
-      access_ip: {{ d_builder_ip }}
+      ansible_host: "{{ d_builder_ip }}"
+      ip: "{{ d_builder_ip }}"
+      access_ip: "{{ d_builder_ip }}"
     d-delivery:
-      ansible_host: {{ d_delivery_ip }}
-      ip: {{ d_delivery_ip }}
-      access_ip: {{ d_delivery_ip }}
+      ansible_host: "{{ d_delivery_ip }}"
+      ip: "{{ d_delivery_ip }}"
+      access_ip: "{{ d_delivery_ip }}"
     d-pipeline:
-      ansible_host: {{ d_pipeline_ip }}
-      ip: {{ d_pipeline_ip }}
-      access_ip: {{ d_pipeline_ip }}
+      ansible_host: "{{ d_pipeline_ip }}"
+      ip: "{{ d_pipeline_ip }}"
+      access_ip: "{{ d_pipeline_ip }}"
     d-ansible:
-      ansible_host: {{ d_pipeline_ip }}
-      ip: {{ d_pipeline_ip }}
-      access_ip: {{ d_pipeline_ip }}
+      ansible_host: "{{ d_ansible_ip }}"
+      ip: "{{ d_ansible_ip }}"
+      access_ip: "{{ d_ansible_ip }}"

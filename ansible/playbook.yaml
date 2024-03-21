@@ -1,5 +1,13 @@
+
+
 - hosts: d-analysis
   remote_user: ubuntu
   become: true
   roles:
-    - sonarqube
+    - sonarqube-preprocess
+
+- hosts: d-analysis
+  remote_user: ubuntu
+  become: true
+  roles:
+    - sonarqube-install

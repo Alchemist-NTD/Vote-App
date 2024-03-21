@@ -1,5 +1,8 @@
-d_analysis_ip: 192.168.1.
-d_builder_ip: 192.168.1.
-d_delivery_ip: 192.168.1.
+d_analysis_ip: 192.168.1.51
+d_builder_ip: 192.168.1.41
+d_delivery_ip: 192.168.1.61
 d_pipeline_ip: 192.168.1.31
-d_ansible_ip: 192.168.1.81
+d_ansible_ip: 42.118.17.4
+distribution_release: jammy
+sonarqube_password: sonar
+
