@@ -1,2 +1,105 @@
 ---
 # tasks file for jenkins
+# - name: Update apt
+#   become: yes
+#   become_user: root
+#   apt:
+#     update_cache: yes
+#     upgrade: yes
+
+# - name: Download Adoptium GPG key
+#   get_url:
+#     url: https://packages.adoptium.net/artifactory/api/gpg/key/public
+#     dest: /etc/apt/keyrings/adoptium.asc
+
+# - name: Add Adoptium repository
+#   lineinfile:
+#     path: /etc/apt/sources.list.d/adoptium.list
+#     line: 'deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb {{ distribution_release }} main'
+#     create: yes
+
+# - name: Update apt
+#   become: yes
+#   become_user: root
+#   apt:
+#     update_cache: yes
+#     upgrade: yes
+
+# - name: Install temurin
+#   apt:
+#     name:
+#       - temurin-17-jdk
+#     state: present
+#     update_cache: yes
+
+# - name: Download jenkins GPG key
+#   get_url:
+#     url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+#     dest: /etc/apt/keyrings/jenkins-keyring.asc
+
+# - name: Add jenkins repository
+#   lineinfile:
+#     path: /etc/apt/sources.list.d/jenkins.list
+#     line: 'deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
+#     create: yes
+
+# - name: Update apt
+#   apt:
+#     update_cache: yes
+
+# - name: Install jenkins
+#   apt:
+#     name:
+#       - jenkins
+#     state: present
+#     update_cache: yes
+
+# - name: Start the jenkins service
+#   systemd:
+#     name: jenkins
+#     state: started
+
+# - name: Enable jenkins service
+#   systemd:
+#     name: jenkins
+#     enabled: yes
+
+# - name: Update apt
+#   become: yes
+#   become_user: root
+#   apt:
+#     update_cache: yes
+#     upgrade: yes
+
+# - name: Install TLS pkg
+#   apt:
+#     name:
+#       - nginx
+#       - certbot
+#       - python3-certbot-nginx
+#     state: present
+#     update_cache: yes
+
+# - name: Copy nginx config
+#   copy:
+#     src: "files/www.enigma.io.vn"
+#     dest: "/etc/nginx/sites-available/www.enigma.io.vn"
+
+# - name: Link nginx sites-enabled directory
+#   become: yes
+#   become_user: root
+#   shell: |
+#     sudo ln -s /etc/nginx/sites-available/www.enigma.io.vn /etc/nginx/sites-enabled/
+#     nginx -t
+
+# - name: Restart the nginx service
+#   systemd:
+#     name: nginx
+#     state: restarted
+
+- name: Obtain SSL certificate for www.enigma.io.vn and enigma.myddns.me
+  become: yes
+  become_user: root
+  shell: |
+    certbot --nginx --noninteractive --agree-tos --email {{ certbot_jenkins_email }} -d www.enigma.io.vn -d enigma.myddns.me 
+    # certbot renew --dry-run --noninteractive

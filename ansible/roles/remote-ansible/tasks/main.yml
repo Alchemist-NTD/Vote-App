@@ -1,29 +1,29 @@
 ---
 # tasks file for remote-ansible
-- name: Add Ansible repository
-  apt_repository:
-    repo: 'ppa:ansible/ansible'
-    state: present
+# - name: Add Ansible repository
+#   apt_repository:
+#     repo: 'ppa:ansible/ansible'
+#     state: present
 
-- name: Update apt
-  apt:
-    update_cache: yes
-    upgrade: yes
+# - name: Update apt
+#   apt:
+#     update_cache: yes
+#     upgrade: yes
 
-- name: Install Ansible
-  apt:
-    name:
-      - ansible
-    state: present
-    update_cache: yes
+# - name: Install Ansible
+#   apt:
+#     name:
+#       - ansible
+#     state: present
+#     update_cache: yes
 
-- name: Copy ssh key from administrator
-  copy:
-    src: "~/.ssh/id_rsa"
-    dest: "/home/ubuntu/.ssh/id_rsa"
-    owner: ubuntu
-    group: ubuntu
-    mode: 0600
+# - name: Copy ssh key from administrator
+#   copy:
+#     src: "~/.ssh/id_rsa"
+#     dest: "/home/ubuntu/.ssh/id_rsa"
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: 0600
 
 - name: Copy ansible configuration to remote host
   copy:
@@ -36,7 +36,15 @@
     dest: /home/ubuntu
     remote_src: yes
 
-- name: Run sonarqube playbook
+# - name: Install community ansible galaxy
+#   become: yes
+#   become_user: ubuntu
+#   args:
+#     chdir: "/home/ubuntu/ansible"
+#   shell: |
+#     ansible-galaxy collection install community.general
+
+- name: Run administrator playbook
   become: yes
   become_user: ubuntu
   args:

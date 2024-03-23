@@ -1,13 +1,18 @@
 
-
-- hosts: d-analysis
+- hosts: d-pipeline
   remote_user: ubuntu
   become: true
   roles:
-    - sonarqube-preprocess
+    - jenkins
 
-- hosts: d-analysis
-  remote_user: ubuntu
-  become: true
-  roles:
-    - sonarqube-install
+# - hosts: d-analysis
+#   remote_user: ubuntu
+#   become: true
+#   roles:
+#     - sonarqube-preprocess
+
+# - hosts: d-analysis
+#   remote_user: ubuntu
+#   become: true
+#   roles:
+#     - sonarqube-install
