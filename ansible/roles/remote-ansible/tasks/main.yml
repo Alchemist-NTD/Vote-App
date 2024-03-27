@@ -20,35 +20,35 @@
 # - name: Copy ssh key from administrator
 #   copy:
 #     src: "~/.ssh/id_rsa"
-#     dest: "/home/ubuntu/.ssh/id_rsa"
-#     owner: ubuntu
-#     group: ubuntu
+#     dest: "/home/{{ home_user }}/.ssh/id_rsa"
+#     owner: "{{ home_user }}"
+#     group: "{{ home_user }}"
 #     mode: 0600
 
 - name: Copy ansible configuration to remote host
   copy:
     src: "files/ansible.tar"
-    dest: "/home/ubuntu/ansible.tar"
+    dest: "/home/{{ home_user }}/ansible.tar"
 
 - name: Extract ansible configuration
   unarchive:
-    src: /home/ubuntu/ansible.tar
-    dest: /home/ubuntu
+    src: /home/{{ home_user }}/ansible.tar
+    dest: /home/{{ home_user }}
     remote_src: yes
 
 # - name: Install community ansible galaxy
 #   become: yes
-#   become_user: ubuntu
+#   become_user: "{{ home_user }}"
 #   args:
-#     chdir: "/home/ubuntu/ansible"
+#     chdir: "/home/{{ home_user }}/ansible"
 #   shell: |
 #     ansible-galaxy collection install community.general
 
 - name: Run administrator playbook
   become: yes
-  become_user: ubuntu
+  become_user: "{{ home_user }}"
   args:
-    chdir: "/home/ubuntu/ansible"
+    chdir: "/home/{{ home_user }}/ansible"
   shell: |
     ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
     -i ./inventory/hosts.yaml \

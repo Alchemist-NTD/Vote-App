@@ -1,0 +1,128 @@
+---
+# tasks file for jenkins-agent
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Create a user jenkins with a password
+  user:
+    name: jenkins
+    password: "{{ 'jenkins' | password_hash('sha512') }}"
+    state: present
+    createhome: yes
+
+- name: Download Adoptium GPG key
+  get_url:
+    url: https://packages.adoptium.net/artifactory/api/gpg/key/public
+    dest: /etc/apt/keyrings/adoptium.asc
+
+- name: Add Adoptium repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/adoptium.list
+    line: 'deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb {{ distribution_release }} main'
+    create: yes
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install temurin
+  apt:
+    name:
+      - temurin-11-jdk
+    state: present
+    update_cache: yes
+
+- name: Update java config
+  become: yes
+  become_user: root
+  shell: |
+    update-alternatives --config java
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install docker dependencies
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: yes
+
+- name: Create keyrings directory and 
+  become: yes
+  become_user: root
+  shell: |
+    mkdir -m 0755 -p /etc/apt/keyrings
+
+- name: Download docker keyrings and setup repository
+  become: yes
+  become_user: "{{ home_user }}"
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install docker packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: yes
+
+- name: Ensure docker group exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add jenkins user to docker group
+  ansible.builtin.user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Create credential dirs and files
+  become: yes
+  become_user: root
+  shell: |
+    mkdir -p /home/jenkins/.ssh
+    touch -f /home/jenkins/.ssh/known_hosts
+    touch -f /home/jenkins/.ssh/authorized_keys
+
+- name: Copy ssh credentials file
+  copy:
+    src: files/jenkinsAgent_rsa
+    dest: /home/jenkins/.ssh
+    owner: jenkins
+    mode: 0600
+
+- name: Copy ssh pub key file
+  copy:
+    src: files/jenkinsAgent_rsa.pub
+    dest: /home/jenkins/.ssh
+    owner: jenkins
+    mode: 0644
+
+- name: Set up legal traffic
+  become: yes
+  become_user: root
+  shell: |
+    cat /home/jenkins/.ssh/jenkinsAgent_rsa.pub >> /home/jenkins/.ssh/authorized_keys
+    chown -R jenkins:jenkins /home/jenkins/.ssh

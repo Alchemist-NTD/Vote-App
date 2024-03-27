@@ -1,18 +1,24 @@
 
 - hosts: d-pipeline
-  remote_user: ubuntu
+  remote_user: fjnz
   become: true
   roles:
     - jenkins
 
-# - hosts: d-analysis
-#   remote_user: ubuntu
-#   become: true
-#   roles:
-#     - sonarqube-preprocess
+- hosts: d-builder
+  remote_user: fjnz
+  become: true
+  roles:
+    - jenkins-agent
 
-# - hosts: d-analysis
-#   remote_user: ubuntu
-#   become: true
-#   roles:
-#     - sonarqube-install
+- hosts: d-analysis
+  remote_user: fjnz
+  become: true
+  roles:
+    - sonarqube-preprocess
+
+- hosts: d-analysis
+  remote_user: fjnz
+  become: true
+  roles:
+    - sonarqube-install

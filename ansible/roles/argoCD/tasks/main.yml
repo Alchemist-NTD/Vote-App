@@ -1,2 +1,8 @@
 ---
 # tasks file for argoCD
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+

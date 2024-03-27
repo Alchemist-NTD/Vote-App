@@ -1,5 +1,8 @@
-d_analysis_ip: 42.118.20.80
-d_builder_ip: 
-d_delivery_ip: 
-d_pipeline_ip: 
-d_ansible_ip: 
+d_analysis_ip: 10.0.168.129
+d_builder_ip: 10.0.168.34
+d_delivery_ip: 10.0.168.62
+d_pipeline_ip: 10.0.168.173
+d_ansible_ip: 10.0.168.177
+distribution_release: jammy
+sonarqube_password: sonar
+home_user: fjnz

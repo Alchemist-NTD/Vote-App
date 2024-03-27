@@ -1,5 +1,5 @@
 - hosts: d-ansible
-  remote_user: ubuntu
+  remote_user: "{{ home_user }}"
   become: true
   roles:
     - remote-ansible

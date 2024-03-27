@@ -16,9 +16,10 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     dest: /etc/apt/trusted.gpg.d/pgdg.asc
 
-- name: Update apt package cache
+- name: Update apt
   apt:
     update_cache: yes
+    upgrade: yes
 
 - name: Install PostgreSQL and PostgreSQL-contrib packages
   apt:
@@ -27,6 +28,12 @@
       - postgresql-contrib
     state: present
     update_cache: yes
+  ignore_errors: yes
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
 
 - name: Enable PostgreSQL service
   systemd:

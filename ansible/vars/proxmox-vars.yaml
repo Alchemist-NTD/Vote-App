@@ -6,4 +6,5 @@ d_ansible_ip: 42.118.17.4
 distribution_release: jammy
 sonarqube_password: sonar
 certbot_jenkins_email: the.warlock.vn@gmail.com
+home_user: ubuntu
 

@@ -1,68 +1,102 @@
 ---
 # tasks file for jenkins
-# - name: Update apt
-#   become: yes
-#   become_user: root
-#   apt:
-#     update_cache: yes
-#     upgrade: yes
+- name: Update apt
+  become: yes
+  become_user: root
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-# - name: Download Adoptium GPG key
-#   get_url:
-#     url: https://packages.adoptium.net/artifactory/api/gpg/key/public
-#     dest: /etc/apt/keyrings/adoptium.asc
+- name: Download Adoptium GPG key
+  get_url:
+    url: https://packages.adoptium.net/artifactory/api/gpg/key/public
+    dest: /etc/apt/keyrings/adoptium.asc
 
-# - name: Add Adoptium repository
-#   lineinfile:
-#     path: /etc/apt/sources.list.d/adoptium.list
-#     line: 'deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb {{ distribution_release }} main'
-#     create: yes
+- name: Add Adoptium repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/adoptium.list
+    line: 'deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb {{ distribution_release }} main'
+    create: yes
 
-# - name: Update apt
-#   become: yes
-#   become_user: root
-#   apt:
-#     update_cache: yes
-#     upgrade: yes
+- name: Update apt
+  become: yes
+  become_user: root
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-# - name: Install temurin
-#   apt:
-#     name:
-#       - temurin-17-jdk
-#     state: present
-#     update_cache: yes
+- name: Install temurin
+  apt:
+    name:
+      - temurin-17-jdk
+    state: present
+    update_cache: yes
 
-# - name: Download jenkins GPG key
-#   get_url:
-#     url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-#     dest: /etc/apt/keyrings/jenkins-keyring.asc
+- name: Download jenkins GPG key
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /etc/apt/keyrings/jenkins-keyring.asc
 
-# - name: Add jenkins repository
-#   lineinfile:
-#     path: /etc/apt/sources.list.d/jenkins.list
-#     line: 'deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
-#     create: yes
+- name: Add jenkins repository
+  lineinfile:
+    path: /etc/apt/sources.list.d/jenkins.list
+    line: 'deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
+    create: yes
 
-# - name: Update apt
-#   apt:
-#     update_cache: yes
+- name: Update apt
+  apt:
+    update_cache: yes
 
-# - name: Install jenkins
-#   apt:
-#     name:
-#       - jenkins
-#     state: present
-#     update_cache: yes
+- name: Install jenkins
+  apt:
+    name:
+      - jenkins
+    state: present
+    update_cache: yes
 
-# - name: Start the jenkins service
-#   systemd:
-#     name: jenkins
-#     state: started
+- name: Start the jenkins service
+  systemd:
+    name: jenkins
+    state: started
 
-# - name: Enable jenkins service
-#   systemd:
-#     name: jenkins
-#     enabled: yes
+- name: Enable jenkins service
+  systemd:
+    name: jenkins
+    enabled: yes
+
+- name: Create credential dirs and files
+  become: yes
+  become_user: root
+  shell: |
+    mkdir -p /home/jenkins/.ssh
+    touch -f /home/jenkins/.ssh/known_hosts
+    touch -f /home/jenkins/.ssh/authorized_keys
+
+- name: Copy ssh credentials file
+  copy:
+    src: files/jenkinsAgent_rsa
+    dest: /home/jenkins/.ssh
+    owner: jenkins
+    mode: 0600
+
+- name: Copy ssh pub key file
+  copy:
+    src: files/jenkinsAgent_rsa.pub
+    dest: /home/jenkins/.ssh
+    owner: jenkins
+    mode: 0644
+
+- name: Set up legal traffic
+  become: yes
+  become_user: root
+  shell: |
+    cat /home/jenkins/.ssh/jenkinsAgent_rsa.pub >> /home/jenkins/.ssh/authorized_keys
+    chown -R jenkins:jenkins /home/jenkins/.ssh
+
+- name: Modify user jenkins with a password
+  user:
+    name: jenkins
+    password: "{{ 'jenkins' | password_hash('sha512') }}"
 
 # - name: Update apt
 #   become: yes
@@ -97,9 +131,9 @@
 #     name: nginx
 #     state: restarted
 
-- name: Obtain SSL certificate for www.enigma.io.vn and enigma.myddns.me
-  become: yes
-  become_user: root
-  shell: |
-    certbot --nginx --noninteractive --agree-tos --email {{ certbot_jenkins_email }} -d www.enigma.io.vn -d enigma.myddns.me 
-    # certbot renew --dry-run --noninteractive
+# - name: Obtain SSL certificate for www.enigma.io.vn and enigma.myddns.me
+#   become: yes
+#   become_user: root
+#   shell: |
+#     certbot --nginx --noninteractive --agree-tos --email {{ certbot_jenkins_email }} -d www.enigma.io.vn -d enigma.myddns.me 
+#     # certbot renew --dry-run --noninteractive

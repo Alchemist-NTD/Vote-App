@@ -1,6 +1,8 @@
 **/.s3creds
 kubespray/
 **/terraform-plugin-proxmox.log
+**/*_rsa
+**/*_rsa.pub
 
 # Local .terraform directories
 **/.terraform/*
