@@ -20,3 +20,17 @@ all:
       ansible_host: "{{ d_ansible_ip }}"
       ip: "{{ d_ansible_ip }}"
       access_ip: "{{ d_ansible_ip }}"
+  children:
+    node-exporter:
+      hosts:
+        d-analysis:
+        d-builder:
+        d-delivery:
+        d-pipeline:
+        d-ansible:
+    scrape-configs:
+      hosts:
+        d-analysis:
+        d-builder:
+        d-delivery:
+        d-pipeline:

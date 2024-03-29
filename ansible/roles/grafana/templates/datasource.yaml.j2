@@ -1,0 +1,12 @@
+# Configuration file version
+apiVersion: 1
+
+datasources:
+
+  - name: Vietnamese-Prometheus
+    type: prometheus
+    url: http://{{ d_ansible_ip }}:9090
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus

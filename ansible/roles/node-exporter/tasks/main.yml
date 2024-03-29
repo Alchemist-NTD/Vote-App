@@ -1,0 +1,58 @@
+---
+# tasks file for node-exporter
+- name: Download Node Exporter archive
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz"
+    dest: "/home/{{ home_user }}/node_exporter-1.7.0.linux-amd64.tar.gz"
+
+- name: Extract Node Exporter archive
+  unarchive:
+    src: "/home/{{ home_user }}/node_exporter-1.7.0.linux-amd64.tar.gz"
+    dest: "/home/{{ home_user }}/"
+    remote_src: yes
+
+- name: Copy executable script
+  become: yes
+  become_user: root
+  shell: |
+    cp node_exporter /usr/local/bin
+  args:
+    chdir: "/home/{{ home_user }}/node_exporter-1.7.0.linux-amd64"
+
+- name: Create node_exporter user
+  user:
+    name: node_exporter
+    shell: /bin/false
+    createhome: no
+
+- name: Change ownership of /usr/local/bin/node_exporter
+  file:
+    path: /usr/local/bin/node_exporter
+    owner: node_exporter
+    group: node_exporter
+    state: touch
+
+- name: Copy Node Exporter systemd service file
+  copy:
+    src: "files/node_exporter.service"
+    dest: "/etc/systemd/system/"
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable node_exporter systemd service
+  systemd:
+    name: node_exporter
+    enabled: yes
+
+- name: Start node_exporter systemd service
+  systemd:
+    name: node_exporter
+    state: started
+
+- name: Remove node_exporter archive
+  file:
+    path: "/home/{{ home_user }}/node_exporter-1.7.0.linux-amd64.tar.gz"
+    state: absent

@@ -1,24 +1,42 @@
 
-- hosts: d-pipeline
-  remote_user: fjnz
-  become: true
-  roles:
-    - jenkins
+# - hosts: d-pipeline
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - jenkins
 
-- hosts: d-builder
-  remote_user: fjnz
-  become: true
-  roles:
-    - jenkins-agent
+# - hosts: d-builder
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - jenkins-agent
 
-- hosts: d-analysis
-  remote_user: fjnz
-  become: true
-  roles:
-    - sonarqube-preprocess
+# - hosts: d-analysis
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - sonarqube-preprocess
 
-- hosts: d-analysis
+# - hosts: d-analysis
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - sonarqube-install
+
+# - hosts: node-exporter
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - node-exporter
+
+# - hosts: d-ansible
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - prometheus
+
+- hosts: d-ansible
   remote_user: fjnz
   become: true
   roles:
-    - sonarqube-install
+    - grafana

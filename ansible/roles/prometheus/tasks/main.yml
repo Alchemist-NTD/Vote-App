@@ -1,0 +1,121 @@
+---
+# tasks file for prometheus
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Create system group prometheus
+  ansible.builtin.group:
+    name: prometheus
+    system: yes
+
+- name: Create system user prometheus
+  ansible.builtin.user:
+    name: prometheus
+    shell: /sbin/nologin
+    system: yes
+    group: prometheus
+
+- name: Create /etc/prometheus directory
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    mode: "0755"
+
+- name: Create /var/lib/prometheus directory
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    state: directory
+    mode: "0755"
+
+- name: Download Prometheus release
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v2.51.1/prometheus-2.51.1.linux-amd64.tar.gz"
+    dest: "/home/{{ home_user }}/prometheus-2.51.1.linux-amd64.tar.gz"
+
+- name: Extract Prometheus archive
+  ansible.builtin.unarchive:
+    src: "/home/{{ home_user }}/prometheus-2.51.1.linux-amd64.tar.gz"
+    dest: "/home/{{ home_user }}/"
+    remote_src: yes
+
+- name: Move Prometheus binary and promtool to /usr/local/bin
+  become: yes
+  become_user: root
+  ansible.builtin.shell: |
+    mv /home/{{ home_user }}/prometheus-2.51.1.linux-amd64/prometheus /usr/local/bin
+    mv /home/{{ home_user }}/prometheus-2.51.1.linux-amd64/promtool /usr/local/bin
+
+- name: Change ownership of /usr/local/bin/prometheus
+  ansible.builtin.file:
+    path: /usr/local/bin/prometheus
+    owner: prometheus
+    group: prometheus
+
+- name: Change ownership of /usr/local/bin/promtool
+  ansible.builtin.file:
+    path: /usr/local/bin/promtool
+    owner: prometheus
+    group: prometheus
+
+- name: Move consoles directory to /etc/prometheus
+  become: yes
+  become_user: root
+  ansible.builtin.shell: |
+    mv /home/{{ home_user }}/prometheus-2.51.1.linux-amd64/consoles /etc/prometheus
+    mv /home/{{ home_user }}/prometheus-2.51.1.linux-amd64/console_libraries /etc/prometheus
+
+- name: Copy prometheus configuration
+  template:
+    src: "templates/prometheus.yaml.j2"
+    dest: "/etc/prometheus/prometheus.yaml"
+    mode: 0644
+
+- name: Change ownership of /etc/prometheus
+  ansible.builtin.file:
+    path: /etc/prometheus
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+
+- name: Change ownership of /etc/prometheus/consoles
+  ansible.builtin.file:
+    path: /etc/prometheus/consoles
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+
+- name: Change ownership of /etc/prometheus/console_libraries
+  ansible.builtin.file:
+    path: /etc/prometheus/console_libraries
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+
+- name: Change ownership of /var/lib/prometheus
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+
+- name: Copy prometheus systemd service file
+  copy:
+    src: "files/prometheus.service"
+    dest: "/etc/systemd/system/"
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable prometheus systemd service
+  systemd:
+    name: prometheus
+    enabled: yes
+
+- name: Start prometheus systemd service
+  systemd:
+    name: prometheus
+    state: started

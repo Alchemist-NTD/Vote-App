@@ -1,0 +1,115 @@
+---
+# tasks file for grafana
+# - name: Update apt
+#   apt:
+#     update_cache: yes
+#     upgrade: yes
+
+# - name: Install required packages
+#   ansible.builtin.package:
+#     name:
+#       - apt-transport-https
+#       - software-properties-common
+#       - wget
+#     state: present
+
+# - name: Create /etc/apt/keyrings/ directory
+#   ansible.builtin.file:
+#     path: /etc/apt/keyrings/
+#     state: directory
+
+# - name: Import Grafana GPG key
+#   ansible.builtin.shell: 
+#     cmd: "wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null"
+
+# - name: Add Grafana repository to sources.list.d
+#   ansible.builtin.lineinfile:
+#     path: /etc/apt/sources.list.d/grafana.list
+#     line: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+#     insertafter: EOF
+#     create: yes
+
+# - name: Update apt
+#   apt:
+#     update_cache: yes
+
+# - name: Install Grafana
+#   ansible.builtin.package:
+#     name: grafana
+#     state: present
+
+# - name: Start Grafana server
+#   ansible.builtin.service:
+#     name: grafana-server
+#     state: started
+
+# - name: Enable Grafana server to start at boot
+#   ansible.builtin.service:
+#     name: grafana-server
+#     enabled: yes
+
+- name: Copy grafana initial config
+  ansible.builtin.template:
+    src: "templates/grafana.ini.j2"
+    dest: "/etc/grafana/grafana.ini"
+    backup: false
+    owner: root
+    group: grafana
+    mode: 0644
+
+# - name: Ensure Grafana provisioning dashboards directory exists
+#   ansible.builtin.file:
+#     path: /etc/grafana/provisioning/dashboards/
+#     state: directory
+#     owner: root
+#     group: grafana
+#     mode: 0755
+
+# - name: Ensure Grafana provisioning datasources directory exists
+#   ansible.builtin.file:
+#     path: /etc/grafana/provisioning/datasources/
+#     state: directory
+#     owner: root
+#     group: grafana
+#     mode: 0755
+
+- name: Ensure Grafana dashboards directory exists
+  ansible.builtin.file:
+    path: /etc/grafana/dashboards/
+    state: directory
+    owner: root
+    group: grafana
+    mode: 0755
+
+- name: Copy grafana dashboard json
+  ansible.builtin.copy:
+    src: "files/dashboard.json"
+    dest: "/etc/grafana/dashboards/"
+    owner: root
+    group: grafana
+    mode: 0644
+
+- name: Copy grafana datasource config
+  ansible.builtin.template:
+    src: "templates/datasource.yaml.j2"
+    dest: "/etc/grafana/provisioning/datasources/datasource.yaml"
+    backup: false
+    owner: root
+    group: grafana
+    mode: 0644
+
+- name: Copy grafana dashboard config
+  ansible.builtin.template:
+    src: "templates/dashboard.yaml.j2"
+    dest: "/etc/grafana/provisioning/dashboards/dashboard.yaml"
+    backup: false
+    owner: root
+    group: grafana
+    mode: 0644
+
+- name: Restart Grafana service
+  become: yes
+  ansible.builtin.systemd:
+    name: grafana-server
+    state: restarted
+    daemon_reload: yes
