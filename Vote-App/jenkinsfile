@@ -19,5 +19,17 @@ pipeline {
                 git branch: 'vcenter-features', credentialsId: 'github', url: 'https://github.com/Warlock-NTD/Vote-App.git'
             }
         }
+
+        stage("Build Application") {
+            steps {
+                sh "cd Vote-App && docker compose build"
+            }
+        }
+
+        stage("Test Application") {
+            steps {
+                sh "cd Vote-App && docker compose up -d"
+            }
+        }
     }
 }
