@@ -40,8 +40,9 @@ pipeline {
 
         stage("Sonarqube scan Application") {
             steps {
-                withSonarQubeEnv(credentialsId: 'jenkins-sonarqube') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                withSonarQubeEnv(credentialsId: "jenkins-sonarqube", installationName: "sonarqube-scanner") {
+                    // sh "sudo rm -rf Vote-App/Data/db"
+                    sh "sudo sonar-scanner -X -Dsonar.projectKey=my_project_key -Dsonar.sources=. -Dsonar.login=admin -Dsonar.password=duy03081998"
                 }
             }
         }
