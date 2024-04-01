@@ -31,5 +31,26 @@ pipeline {
                 sh "cd Vote-App && docker compose up -d"
             }
         }
+
+        // stage("Terminate Application") {
+        //     steps {
+        //         sh "cd Vote-App && docker compose down"
+        //     }
+        // }
+
+        stage("Sonarqube scan Application") {
+            steps {
+                withSonarQubeEnv(credentialsId: 'jenkins-sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "-=- remove deployment -=-"
+            sh "cd Vote-App && docker compose down"
+        }
     }
 }
