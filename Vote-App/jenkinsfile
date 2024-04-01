@@ -1,0 +1,23 @@
+pipeline {
+    agent {
+        label "jenkins-agent"
+    }
+    tools {
+        dockerTool "docker-d"
+        jdk "java17"
+        git "git-d"
+    }
+    stages {
+        stage("Cleanup Workspace") {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage("Checkout from SCM") {
+            steps {
+                git branch: 'vcenter-features', credentialsId: 'github', url: 'https://github.com/Warlock-NTD/Vote-App.git'
+            }
+        }
+    }
+}

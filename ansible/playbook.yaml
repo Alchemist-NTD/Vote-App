@@ -35,8 +35,8 @@
 #   roles:
 #     - prometheus
 
-- hosts: d-ansible
-  remote_user: fjnz
-  become: true
-  roles:
-    - grafana
+# - hosts: d-ansible
+#   remote_user: fjnz
+#   become: true
+#   roles:
+#     - grafana
